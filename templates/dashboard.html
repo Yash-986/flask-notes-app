@@ -1,0 +1,208 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | NoteSpace{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a href="{{ url_for('dashboard') }}" class="brand">
+            <i class="bi bi-journal-text"></i>
+            NoteSpace
+        </a>
+
+        <p class="sidebar-label">WORKSPACE</p>
+
+        <a href="{{ url_for('dashboard') }}" class="nav-link-custom active">
+            <i class="bi bi-grid"></i> All Notes
+        </a>
+
+        <a href="{{ url_for('create_note') }}" class="nav-link-custom">
+            <i class="bi bi-plus-circle"></i> Create Note
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <p class="sidebar-label">ACCOUNT</p>
+
+        <a href="{{ url_for('profile') }}" class="nav-link-custom">
+            <i class="bi bi-person"></i> Profile
+        </a>
+
+        <form method="POST" action="{{ url_for('logout') }}">
+            <input type="hidden" name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <button type="submit" class="nav-link-custom logout-btn">
+                <i class="bi bi-box-arrow-left"></i> Logout
+            </button>
+        </form>
+
+        <div class="sidebar-user">
+            <div class="avatar">
+                {{ current_user.username[0]|upper }}
+            </div>
+
+            <div>
+                <strong>{{ current_user.username }}</strong>
+                <small>Personal Workspace</small>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <p class="text-muted mb-1">YOUR WORKSPACE</p>
+                <h2>My Notes</h2>
+            </div>
+
+            <a href="{{ url_for('create_note') }}" class="btn btn-purple">
+                <i class="bi bi-plus-lg"></i> New Note
+            </a>
+        </header>
+
+
+        <!-- STATS -->
+        <div class="stats-card">
+            <div class="stats-icon">
+                <i class="bi bi-journal-bookmark"></i>
+            </div>
+
+            <div>
+                <h3>{{ total_notes }}</h3>
+                <p>Total Notes</p>
+            </div>
+        </div>
+
+
+        <!-- SEARCH -->
+        <form method="GET" action="{{ url_for('dashboard') }}"
+              class="search-form">
+
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+
+                <input type="text"
+                       name="search"
+                       value="{{ search }}"
+                       placeholder="Search your notes...">
+            </div>
+
+            <select name="category" class="form-select category-select">
+                <option value="">All Categories</option>
+
+                {% for cat in categories %}
+                    <option value="{{ cat }}"
+                        {% if selected_category == cat %}selected{% endif %}>
+                        {{ cat }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="btn btn-purple">Search</button>
+        </form>
+
+
+        <!-- NOTES -->
+        <div class="notes-header">
+            <h4>Your Notes</h4>
+            <span>{{ notes|length }} results</span>
+        </div>
+
+
+        {% if notes %}
+
+            <div class="notes-grid">
+
+                {% for note in notes %}
+
+                    <div class="note-card">
+
+                        <div class="note-card-top">
+                            <span class="category-badge">
+                                {{ note.category }}
+                            </span>
+
+                            <div class="dropdown">
+                                <button class="icon-btn"
+                                        data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li>
+                                        <a class="dropdown-item"
+                                           href="{{ url_for('edit_note', note_id=note.id) }}">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <form method="POST"
+                                              action="{{ url_for('delete_note', note_id=note.id) }}"
+                                              onsubmit="return confirm('Delete this note?');">
+
+                                            {{ delete_form.hidden_tag() }}
+
+                                            <button type="submit"
+                                                    class="dropdown-item text-danger">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h5>{{ note.title }}</h5>
+
+                        <p class="note-content">
+                            {{ note.content }}
+                        </p>
+
+                        <div class="note-footer">
+                            <span>
+                                <i class="bi bi-clock"></i>
+                                {{ note.updated_at.strftime('%d %b %Y') }}
+                            </span>
+
+                            <a href="{{ url_for('edit_note', note_id=note.id) }}">
+                                Open <i class="bi bi-arrow-up-right"></i>
+                            </a>
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <i class="bi bi-journal-plus"></i>
+                <h3>No notes found</h3>
+                <p>Create your first note and start organizing your ideas.</p>
+
+                <a href="{{ url_for('create_note') }}"
+                   class="btn btn-purple">
+                    Create Your First Note
+                </a>
+            </div>
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+{% endblock %}

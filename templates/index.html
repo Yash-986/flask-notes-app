@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block title %}Welcome | Notes App{% endblock %}
+
+{% block content %}
+
+<div class="landing-page">
+
+    <nav class="navbar navbar-dark container py-4">
+        <a class="navbar-brand fw-bold fs-3" href="/">
+            <i class="bi bi-journal-text text-purple"></i>
+            NoteSpace
+        </a>
+
+        <div class="d-flex gap-3">
+            <a href="{{ url_for('login') }}" class="btn btn-outline-light">
+                Login
+            </a>
+
+            <a href="{{ url_for('register') }}" class="btn btn-purple">
+                Get Started
+            </a>
+        </div>
+    </nav>
+
+    <section class="hero text-center">
+
+        <span class="hero-tag">
+            YOUR PERSONAL DIGITAL NOTEBOOK
+        </span>
+
+        <h1>
+            Your thoughts.<br>
+            <span class="gradient-text">Your space.</span>
+        </h1>
+
+        <p>
+            Organize your ideas, save your thoughts,
+            and keep everything in one beautiful place.
+        </p>
+
+        <a href="{{ url_for('register') }}" class="btn btn-purple btn-lg">
+            Start Taking Notes <i class="bi bi-arrow-right"></i>
+        </a>
+
+    </section>
+
+</div>
+
+{% endblock %}
